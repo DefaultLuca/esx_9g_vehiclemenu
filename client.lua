@@ -1,8 +1,10 @@
-ESX           = nil
+ESX = nil
 local windowstatus  = { [0] = false, [1] = false, [2] = false, [3] = false }
 local indicatorstatus = { [0] = false, [1] = false }
 local internallightstatus = false
 local externallightstatus = false
+local helisearchlightstatus = false
+local helitarget = nil
 local extrasstatus = { [1] = false, [2] = false, [3] = false, [4] = false, [5] = false, [6] = false, [7] = false, [8] = false, [9] = false }
 
 Citizen.CreateThread(function()
@@ -29,6 +31,7 @@ function ShowVehicleMenu()
             { label = _U('indicatorright'), value = 'indicatorright' },
             { label = _U('internallight'), value = 'internallight' },
             { label = _U('externallight'), value = 'externallight' },
+            { label = _U('helisearchlight'), value = 'helisearchlight' },
             { label = _U('extras'), value = 'extras' }
         }
     }, 
@@ -124,45 +127,55 @@ function ShowVehicleMenu()
                 ToggleVehicleInternalLight()
             elseif data.current.value == 'externallight' then
                 ToggleVehicleExternalLight()
+            elseif data.current.value == 'helisearchlight' then
+                ToggleHeliSearchLight()
             elseif data.current.value == 'extras' then
 
-                local playerped = GetPlayerPed(-1)
-                if IsPedInAnyVehicle(playerped, false) then
-                    local vehicle   = GetVehiclePedIsUsing(playerped)
-                    local i = 1
-                    local elements = {}
-                    for i = 1, 9, 1 do
-                        if DoesExtraExist(vehicle, i) then
-                            table.insert(elements, { label = _U('extras')..' '..i, value = i })
-                        end
-                    end
-                    if #elements == 0 then
-                        table.insert(elements, { label = _U('noextras') })
-                    end
-                    ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'extrasmenu',
-                    {
-                        title   = _U('extras'),
-                        align   = 'bottom-right',
-                        elements = elements
-                    },
-                    function(data2, menu2)
-                        if data2.current.value then
-                            if extrasstatus[data2.current.value] == true then
-                                SetVehicleExtra(vehicle, data2.current.value, false)
-                            else
-                                SetVehicleExtra(vehicle, data2.current.value, true)
+                ESX.TriggerServerCallback('9g_vehiclemenu:getPlayerGroup', function(group)
+
+                    if group == 'admin' or group == 'superadmin' then
+                        local playerped = GetPlayerPed(-1)
+                        if IsPedInAnyVehicle(playerped, false) then
+                            local vehicle   = GetVehiclePedIsUsing(playerped)
+                            local i = 1
+                            local elements = {}
+                            for i = 1, 9, 1 do
+                                if DoesExtraExist(vehicle, i) then
+                                    table.insert(elements, { label = _U('extras')..' '..i, value = i })
+                                end
                             end
-                            extrasstatus[data2.current.value] = not extrasstatus[data2.current.value]
+                            if #elements == 0 then
+                                table.insert(elements, { label = _U('noextras') })
+                            end
+                            ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'extrasmenu',
+                            {
+                                title   = _U('extras'),
+                                align   = 'bottom-right',
+                                elements = elements
+                            },
+                            function(data2, menu2)
+                                if data2.current.value then
+                                    if extrasstatus[data2.current.value] == true then
+                                        SetVehicleExtra(vehicle, data2.current.value, false)
+                                    else
+                                        SetVehicleExtra(vehicle, data2.current.value, true)
+                                    end
+                                    extrasstatus[data2.current.value] = not extrasstatus[data2.current.value]
+                                else
+                                    menu2.close()
+                                end
+                            end,
+                            function(data2, menu2)
+                                menu2.close()
+                            end)
                         else
-                            menu2.close()
+                            ESX.ShowNotification(_U('not_vehicle'))
                         end
-                    end,
-                    function(data2, menu2)
-                        menu2.close()
-                    end)
-                else
-                    ESX.ShowNotification(_U('not_vehicle'))
-                end
+                    else
+                        ESX.ShowNotification(_U('no_permission'))
+                    end
+
+                end)
 
             end
         end
@@ -173,7 +186,55 @@ function ShowVehicleMenu()
 
 end
 
+-- dev -- Target heli search light to the closest vehicle
+function TargetHeliSearchLight()
+    local playerped = GetPlayerPed(-1)
 
+    NetworkOverrideClockTime(00, 00, 00) -- set midnight for testing
+    
+    if IsPedInAnyVehicle(playerped, false) then
+        local vehicle   = GetVehiclePedIsUsing(playerped)
+        local coords = GetEntityCoords(playerped)
+        --local helitarget = ESX.Game.GetClosestVehicle(playercoords)
+        local helitarget = GetClosestVehicle(coords.x, coords.y, coords.z-5, 50.0, 0, 71)
+
+        print(vehicle, helitarget)
+
+        SetMountedWeaponTarget(vehicle, 0, helitarget, 0.0, 0.0, 0.0) -- should work, otherwise DRAWSPOTLIGHT solution
+        --     shootingPed --[[ Ped ]], 
+        --     targetPed --[[ Ped ]], 
+        --     targetVehicle --[[ Vehicle ]], 
+        --     x --[[ number ]], 
+        --     y --[[ number ]], 
+        --     z --[[ number ]]
+
+    else
+        ESX.ShowNotification(_U('not_vehicle'))
+    end
+
+end
+
+
+-- Toggle heli search light only if in the driver seat
+function ToggleHeliSearchLight()
+    local playerped = GetPlayerPed(-1)
+
+  if IsPedInAnyVehicle(playerped, false) then  
+        local vehicle   = GetVehiclePedIsUsing(playerped)
+        if GetPedInVehicleSeat(vehicle, -1) == playerped then
+            if helisearchlightstatus == true then
+                SetVehicleSearchlight(vehicle, false, false)
+            else
+                SetVehicleSearchlight(vehicle, true, false)
+            end
+            helisearchlightstatus = not helisearchlightstatus
+        else
+            ESX.ShowNotification(_U('not_driverseat'))
+        end
+    else
+        ESX.ShowNotification(_U('not_vehicle'))
+    end
+end
 
 -- Toggle external light only if in the driver seat
 function ToggleVehicleExternalLight()
@@ -207,10 +268,10 @@ function ToggleVehicleInternalLight()
         if GetPedInVehicleSeat(vehicle, -1) == playerped then
             if internallightstatus == true then
                 SetVehicleInteriorlight(vehicle, false)
-                --SetVehicleSearchlight(vehicle, false, false) --search light only for heli
+                SetVehicleSearchlight(vehicle, false, false) --search light only for heli, only night time
             else
                 SetVehicleInteriorlight(vehicle, true)
-                --SetVehicleSearchlight(vehicle, true, false)
+                SetVehicleSearchlight(vehicle, true, false)
             end
             internallightstatus = not internallightstatus
         else
@@ -442,11 +503,48 @@ end)
 -- -------------------------------------------------  
 -- Confirmed p2 does not work as a bool. Changed to int. [0=on, 1=off]  
 
+-- SetVehicleSearchlight(
+-- 	heli --[[ Vehicle ]], 
+-- 	toggle --[[ boolean ]], 
+-- 	canBeUsedByAI --[[ boolean ]]
+-- )
+-- Only works during nighttime.  
+-- And only if there is a driver in heli. 
 
+-- SetMountedWeaponTarget(
+-- 	shootingPed --[[ Ped ]], 
+-- 	targetPed --[[ Ped ]], 
+-- 	targetVehicle --[[ Vehicle ]], 
+-- 	x --[[ number ]], 
+-- 	y --[[ number ]], 
+-- 	z --[[ number ]]
+-- )
+-- Note: Look in decompiled scripts and the times that p1 and p2 aren't 0. They are filled with vars. If you look through out that script what other natives those vars are used in, you can tell p1 is a ped and p2 is a vehicle. Which most likely means if you want the mounted weapon to target a ped set targetVehicle to 0 or vice-versa.  
 
-
-
-
+-- GetClosestVehicle(
+--     x --[[ number ]], 
+--     y --[[ number ]], 
+--     z --[[ number ]], 
+--     radius --[[ number ]], 
+--     modelHash --[[ Hash ]], 
+--     flags --[[ integer ]]
+-- )
+-- Example usage  
+-- VEHICLE::GET_CLOSEST_VEHICLE(x, y, z, radius, hash, unknown leave at 70)   
+-- x, y, z: Position to get closest vehicle to.  
+-- radius: Max radius to get a vehicle.  
+-- modelHash: Limit to vehicles with this model. 0 for any.  
+-- flags: The bitwise flags altering the function's behaviour.  
+-- Does not return police cars or helicopters.  
+-- It seems to return police cars for me, does not seem to return helicopters, planes or boats for some reason  
+-- Only returns non police cars and motorbikes with the flag set to 70 and modelHash to 0. ModelHash seems to always be 0 when not a modelHash in the scripts, as stated above.   
+-- These flags were found in the b617d scripts: 0,2,4,6,7,23,127,260,2146,2175,12294,16384,16386,20503,32768,67590,67711,98309,100359.  
+-- Converted to binary, each bit probably represents a flag as explained regarding another native here: gtaforums.com/topic/822314-guide-driving-styles  
+-- Conversion of found flags to binary: pastebin.com/kghNFkRi  
+-- At exactly 16384 which is 0100000000000000 in binary and 4000 in hexadecimal only planes are returned.   
+-- It's probably more convenient to use worldGetAllVehicles(int *arr, int arrSize) and check the shortest distance yourself and sort if you want by checking the vehicle type with for example VEHICLE::IS_THIS_MODEL_A_BOAT  
+-- -------------------------------------------------------------------------  
+-- Conclusion: This native is not worth trying to use. Use something like this instead: pastebin.com/xiFdXa7h 
 
 
 

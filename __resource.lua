@@ -7,8 +7,12 @@ resource_manifest_version '05cfa83c-a124-4cfa-a768-c24a5811d8f9'	--(2017-06-04)
 
 client_script {
     '@es_extended/locale.lua',
-	--'locales/en.lua',
+	'locales/en.lua',
     'locales/it.lua',
     'config.lua',
     'client.lua'
+}
+
+server_script {
+    'server.lua'
 }

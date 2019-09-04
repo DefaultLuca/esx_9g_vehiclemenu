@@ -5,7 +5,7 @@
 ## Introduction
 
 Simple vehicle menu for tweaking with doors and windows.
-Also toggle indicator, headlight, and extra.
+Also toggle indicator, headlight, searchlight for heli, and extra for admin.
 (engine toggle and locksystem events from other resources)
 
 
