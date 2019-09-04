@@ -50,12 +50,12 @@ Also toggle indicator, headlight, and extra.
 
 ## Made by DefaultLuca
 
-    https://github.com/DefaultLuca
+-    https://github.com/DefaultLuca-
 
 
 ## Donate
 
-    https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YJRFFHWWFHDVG&source=url
+-    https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YJRFFHWWFHDVG&source=url
 
 
 ## License
