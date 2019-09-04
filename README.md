@@ -50,7 +50,7 @@ Also toggle indicator, headlight, and extra.
 
 ## Made by DefaultLuca
 
--    https://github.com/DefaultLuca-
+-    https://github.com/DefaultLuca
 
 
 ## Donate
