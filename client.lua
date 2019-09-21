@@ -190,7 +190,7 @@ end
 function TargetHeliSearchLight()
     local playerped = GetPlayerPed(-1)
 
-    NetworkOverrideClockTime(00, 00, 00) -- set midnight for testing
+    --NetworkOverrideClockTime(00, 00, 00) -- set midnight for testing
     
     if IsPedInAnyVehicle(playerped, false) then
         local vehicle   = GetVehiclePedIsUsing(playerped)
@@ -198,7 +198,7 @@ function TargetHeliSearchLight()
         --local helitarget = ESX.Game.GetClosestVehicle(playercoords)
         local helitarget = GetClosestVehicle(coords.x, coords.y, coords.z-5, 50.0, 0, 71)
 
-        print(vehicle, helitarget)
+        --print(vehicle, helitarget)
 
         SetMountedWeaponTarget(vehicle, 0, helitarget, 0.0, 0.0, 0.0) -- should work, otherwise DRAWSPOTLIGHT solution
         --     shootingPed --[[ Ped ]], 

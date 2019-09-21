@@ -1,64 +1,57 @@
-## 9g_vehiclemenu - VEHICLE MENU for ESX Framework
+## 9g_vehiclemenu
+### VEHICLE MENU for ESX Framework
 
-
-
-## Introduction
+## <br /> Introduction
 
 Simple vehicle menu for tweaking with doors and windows.
 Also toggle indicator, headlight, searchlight for heli, and extra for admin.
 (engine toggle and locksystem events from other resources)
 
 
-## Requirements
+## <br /> Requirements
 
 - ESX Framework
-- esx_menu_default
-- optional esx_locksystem45
-- optional 9g_extratools
 
 
-## Support
+## <br /> Support
 
 -   https://github.com/DefaultLuca
 -   Feel free to edit the code, just refer the author.
 
 
-## Installation
+## <br /> Installation
 
 - Download the resource and add this in your server.cfg:
     start 9g_vehiclemenu
 
 
-## How it works
+## <br /> How it works
 
 - Allow the player to toggle doors, windows and etc.
 - To open menu, default button: F5.
-- The player must be in a vehicle and/or in the driver seat.
-- If you are in the driver seat you can do use all commands.
+- The player must be in a vehicle and/or in the driver seat. 
+- Admin and Superadmin can toggle vehicle EXTRAS.
 - If you are not in the driver seat you are restricted to toggle stuff(door and window) of the relative position.
-
 - For the engine toggle and locksystem you need to edit the code with your own event (line #38 and #41).
 - I'm using a edited version of esx_locksystem45, the event ls:togglelock is not in the original.
 - For the engine toggle I made my own resource.
+- Targeting with the Heli search light is not implemented yet.
 
 
-## Credits
+## <br /> Credits
 
 - ESX Framework
     https://github.com/ESX-Org
 
 
-## Made by DefaultLuca
+## <br /> DefaultLuca
 
 -    https://github.com/DefaultLuca
 
-
-## Donate
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/defaultluca) 
+-   [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/defaultluca)  
 
 
-## License
+## <br /> License
     9g_vehiclemenu
     Copyright (C) 2019 DefaultLuca https://github.com/DefaultLuca
 
