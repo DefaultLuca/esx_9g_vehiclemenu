@@ -48,7 +48,7 @@ Also toggle indicator, headlight, searchlight for heli, and extra for admin.
 
 -    https://github.com/DefaultLuca
 
--   [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/defaultluca)  
+-   [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YJRFFHWWFHDVG&source=url)
 
 
 ## <br /> License
