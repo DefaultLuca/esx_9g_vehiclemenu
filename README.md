@@ -22,8 +22,9 @@ Also toggle indicator, headlight, searchlight for heli, and extra for admin.
 ## <br /> Installation
 
 - Download the resource and add this in your server.cfg:
-    start esx_9g_vehiclemenu
-
+```lua 
+start esx_9g_vehiclemenu
+```
 
 ## <br /> How it works
 
